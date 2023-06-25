@@ -4,14 +4,11 @@ import pickle
 from threading import Thread
 #from utils import check_exit
 from message import Message
+from utils import check_exit
 
 HOST = 'localhost'
 PORT = 9001
 BUFSIZE = 4096
-
-def check_exit(message: Message) -> bool:
-    ''' Checks if the message sent by user is an exit message '''
-    return message.content.decode('utf-8').lower() == 'exit'
 
 clients = list()
 
@@ -27,9 +24,6 @@ def broadcast_message(client_socket: socket.socket, serialized_data) -> None:
 
 def handle_client(client_socket: socket.socket) -> None:
     while True:
-        '''
-        msg = recv_client_data(client_socket)
-        '''
         serialized_data = client_socket.recv(BUFSIZE)
         msg = pickle.loads(serialized_data)
         if check_exit(msg):
