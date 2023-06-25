@@ -12,6 +12,7 @@ PORT = 9001
 
 # DEBUG
 USERNAME = str()
+USERNAME = input('Enter username: ')
 
 # UI STUFF
 root = Tk()
@@ -32,7 +33,7 @@ def cleanup(*args):
     
 def send_client_data(client_socket: socket.socket, user_input: Entry) -> None:
     message = user_input.get()
-    msg = Message('satweek'.encode('utf-8'), message.encode('utf-8'), None)
+    msg = Message(USERNAME.encode('utf-8'), message.encode('utf-8'), None)
     msg_bytes = pickle.dumps(msg)
     client_socket.send(msg_bytes)
     user_input.delete(0, len(user_input.get()))
@@ -51,7 +52,6 @@ def recieve_server_data(client_socket: socket.socket, msg_field: Text) -> None:
         msg_field.see(END)
 
 def main():
-    
     # GUI Stuff
     # TODO: Abstract it into separate files
     msg_field = Text(root, bg=BG_COLOR, fg=TEXT_COLOR, font=FONT, width=60)
@@ -70,6 +70,9 @@ def main():
     # Sending the data when we click the button
     send_button = Button(root, text="Send", font=FONT_BOLD, bg=BG_GRAY, command=partial(send_client_data, client_socket, user_input_field))
     send_button.grid(row=2, column=1)
+    
+    # Binding the enter button to send_button
+    root.bind('<Return>', lambda event: send_client_data(client_socket, user_input_field))
     
     # Main tkinter loop
     root.mainloop()
